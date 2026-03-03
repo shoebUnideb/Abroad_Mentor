@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Register – Mentor Platform{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Student registration</p>
+
+        <form method="post" action="{% url 'accounts:register' %}">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <ul class="field-errors">
+                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+                {% if field.help_text %}
+                <small style="color:#6b7280; font-size:0.78rem;">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">
+                Create Account
+            </button>
+        </form>
+
+        <p class="auth-link">
+            Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

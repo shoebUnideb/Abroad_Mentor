@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard – Mentor Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="dash-header">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p style="color:#6b7280; font-size:0.88rem; margin-top:4px;">Your learning space</p>
+            </div>
+            <div style="display:flex; gap:0.75rem; align-items:center;">
+                <a href="{% url 'core:student_profile' %}" class="btn btn-secondary btn-sm">Edit Profile</a>
+                <span class="role-badge badge-student">Student</span>
+            </div>
+        </div>
+
+        <!-- Account info -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Username</div>
+                <div class="value">{{ user.username }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Email</div>
+                <div class="value">{{ user.email|default:"—" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Member Since</div>
+                <div class="value">{{ user.date_joined|date:"d M Y" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Assigned Mentor</div>
+                <div class="value">
+                    {% if assignment and assignment.mentor %}
+                    <span style="color:#10b981; font-weight:600;">{{ assignment.mentor.user.username }}</span>
+                    {% else %}
+                    <span style="color:#6b7280;">Not assigned yet</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Mentor info box -->
+        {% if assignment and assignment.mentor %}
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:1rem 1.25rem; margin-bottom:1.5rem;">
+            <p style="font-weight:700; color:#065f46; margin-bottom:0.5rem;">Your Mentor</p>
+            <p style="font-size:0.9rem; color:#374151;">
+                <strong>{{ assignment.mentor.user.username }}</strong>
+                {% if assignment.mentor.user.email %} • {{ assignment.mentor.user.email }}{% endif %}
+            </p>
+            {% if assignment.mentor.expertise %}
+            <p style="font-size:0.85rem; color:#6b7280; margin-top:4px;">⚡ {{ assignment.mentor.expertise }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Quick actions -->
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <a href="{% url 'core:application_list' %}" class="btn btn-primary btn-sm">View All Applications</a>
+        </div>
+
+        <!-- Todo / needs-revision steps -->
+        {% if todo_steps %}
+        <p class="section-title">Steps Needing Your Action ({{ todo_steps|length }})</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Step</th><th>Application</th><th>Status</th><th>Due</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for step in todo_steps %}
+                    <tr>
+                        <td><strong>{{ step.title }}</strong></td>
+                        <td>{{ step.application.title }}</td>
+                        <td>
+                            <span style="padding:3px 10px; border-radius:12px; font-size:0.78rem; font-weight:700;
+                                {% if step.status == 'needs_revision' %}background:#fee2e2;color:#991b1b;
+                                {% else %}background:#f3f4f6;color:#6b7280;{% endif %}">
+                                {{ step.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="font-size:0.82rem;color:#6b7280;">{{ step.due_date|date:"d M Y"|default:"—" }}</td>
+                        <td><a href="{% url 'core:step_detail' step.pk %}" class="btn btn-secondary btn-sm">Open</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Applications -->
+        <p class="section-title">My Applications ({{ applications|length }})</p>
+        {% if applications %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Title</th><th>Status</th><th>Steps</th><th>Submitted</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td><strong>{{ app.title }}</strong></td>
+                        <td>
+                            <span style="padding:3px 10px; border-radius:12px; font-size:0.78rem; font-weight:700;
+                                {% if app.status == 'approved' %}background:#d1fae5;color:#065f46;
+                                {% elif app.status == 'rejected' %}background:#fee2e2;color:#991b1b;
+                                {% elif app.status == 'under_review' %}background:#bfdbfe;color:#1e40af;
+                                {% else %}background:#f3f4f6;color:#6b7280;{% endif %}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ app.steps.count }} steps</td>
+                        <td style="font-size:0.82rem;color:#6b7280;">{{ app.created_at|date:"d M Y" }}</td>
+                        <td><a href="{% url 'core:application_detail' app.pk %}" class="btn btn-secondary btn-sm">Open</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color:#6b7280; font-size:0.9rem; padding:1rem 0;">
+            No applications yet. Ask your mentor or admin to create one for you.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

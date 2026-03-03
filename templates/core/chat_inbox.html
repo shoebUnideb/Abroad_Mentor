@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Messages – Mentor Platform{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:760px;">
+    <div class="card">
+        <div class="dash-header">
+            <div>
+                <h1>Messages</h1>
+                <p style="color:#6b7280; font-size:0.88rem; margin-top:4px;">Conversations with mentors</p>
+            </div>
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary btn-sm">← Dashboard</a>
+        </div>
+
+        {% if inbox %}
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            {% for item in inbox %}
+            <a href="{% url 'core:chat_thread_admin' item.mentor.pk %}"
+               style="display:flex; align-items:center; justify-content:space-between;
+                      padding:0.85rem 1.1rem; border-radius:8px; border:1px solid #e5e7eb;
+                      background:#fff; text-decoration:none; color:#1a1a2e;
+                      transition:background 0.15s;">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <div style="width:40px; height:40px; border-radius:50%; background:#1e40af;
+                                display:flex; align-items:center; justify-content:center;
+                                font-size:1.1rem; font-weight:700; color:#fff; flex-shrink:0;">
+                        {{ item.mentor.username|first|upper }}
+                    </div>
+                    <div>
+                        <p style="font-weight:600; font-size:0.95rem;">{{ item.mentor.username }}</p>
+                        {% if item.last_msg %}
+                        <p style="font-size:0.8rem; color:#6b7280; margin-top:2px;">
+                            {{ item.last_msg.body|truncatechars:55 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-shrink:0;">
+                    {% if item.unread > 0 %}
+                    <span style="background:#e94560; color:#fff; font-size:0.72rem; font-weight:700;
+                                 border-radius:20px; padding:2px 9px;">{{ item.unread }} new</span>
+                    {% endif %}
+                    {% if item.last_msg %}
+                    <span style="font-size:0.78rem; color:#9ca3af;">{{ item.last_msg.timestamp|date:"d M, H:i" }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:#6b7280; font-size:0.9rem; padding:1rem 0;">
+            No mentor has messaged you yet.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

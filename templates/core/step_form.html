@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Step{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:640px;">
+  <div class="card">
+    <div class="dash-header">
+      <div>
+        <h1>{{ action }} Step</h1>
+        <p style="color:#6b7280;font-size:.85rem;margin-top:4px;">Application: <strong>{{ application.title }}</strong></p>
+      </div>
+      <a href="{% url 'core:application_detail' application.pk %}" class="btn btn-secondary btn-sm">← Back</a>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="field-errors">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary">{{ action }} Step</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
