@@ -7,30 +7,18 @@ export const profilesApi = {
     apiClient.get<StudentProfile>('/api/student/profile/'),
 
   updateStudentProfile: (data: FormData) =>
-    fetch('/api/student/profile/', {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken') ?? '',
-        'Accept': 'application/json',
-      },
-      body: data,
-    }).then(r => r.json() as Promise<StudentProfile>),
+    apiClient.patch<StudentProfile>('/api/student/profile/', data),
 
   // Mentor
   getMentorProfile: () =>
     apiClient.get<MentorProfile>('/api/mentor/profile/'),
 
   updateMentorProfile: (data: FormData) =>
-    fetch('/api/mentor/profile/', {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken') ?? '',
-        'Accept': 'application/json',
-      },
-      body: data,
-    }).then(r => r.json() as Promise<MentorProfile>),
+    apiClient.patch<MentorProfile>('/api/mentor/profile/', data),
+
+  // Student → their assigned mentor
+  getMyMentor: () =>
+    apiClient.get<MentorProfile | null>('/api/student/mentor/'),
 
   // Mentor → their students
   getMentorStudents: () =>
@@ -38,9 +26,27 @@ export const profilesApi = {
 
   getMentorStudentDetail: (studentId: number) =>
     apiClient.get<StudentProfile>(`/api/mentor/students/${studentId}/`),
-};
 
-function getCookie(name: string): string | undefined {
-  const match = document.cookie.match(new RegExp(`(?:^|;)\\s*${name}=([^;]+)`));
-  return match ? decodeURIComponent(match[1]) : undefined;
-}
+  // Public profile — connected users ("friends") or mentor viewing their student
+  getPublicProfile: (userId: number) =>
+    apiClient.get<StudentProfile | MentorProfile>(`/api/profiles/${userId}/`),
+
+  getMentorPendingFeed: () =>
+    apiClient.get<{
+      steps: Array<{
+        id: number;
+        title: string;
+        application_id: number;
+        application_title: string;
+        student_name: string;
+        updated_at: string;
+      }>;
+      workspace_requests: Array<{
+        id: number;
+        workspace_id: number;
+        workspace_name: string;
+        student_name: string;
+        requested_at: string;
+      }>;
+    }>('/api/mentor/pending/'),
+};

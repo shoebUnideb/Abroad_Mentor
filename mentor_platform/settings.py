@@ -25,10 +25,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'channels',
     'accounts',
     'core',
+    'org_portal',
 ]
+
+ASGI_APPLICATION = 'mentor_platform.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -104,9 +116,11 @@ LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # ── Django REST Framework ─────────────────────────────────────────────
+from datetime import timedelta
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -116,6 +130,19 @@ REST_FRAMEWORK = {
     ],
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME':    timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME':   timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS':    True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM':                'HS256',
+    'SIGNING_KEY':              SECRET_KEY,
+    'AUTH_HEADER_TYPES':        ('Bearer',),
+    'USER_ID_FIELD':            'id',
+    'USER_ID_CLAIM':            'user_id',
+    'TOKEN_OBTAIN_SERIALIZER':  'accounts.serializers.CustomTokenObtainPairSerializer',
+}
+
 # ── CORS ─────────────────────────────────────────────────────────────
 # Allow requests from the Vite dev server
 CORS_ALLOWED_ORIGINS = config(
@@ -123,7 +150,7 @@ CORS_ALLOWED_ORIGINS = config(
     default='http://localhost:5173,http://127.0.0.1:5173',
     cast=lambda v: [s.strip() for s in v.split(',')],
 )
-CORS_ALLOW_CREDENTIALS = True  # Required for session cookie auth
+CORS_ALLOW_CREDENTIALS = False  # JWT uses Authorization header, not cookies
 
 # Prevent browser from caching CSRF token mismatch
 CSRF_TRUSTED_ORIGINS = config(

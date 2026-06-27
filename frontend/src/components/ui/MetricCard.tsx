@@ -10,7 +10,7 @@ interface Props {
 }
 
 const ACCENT = {
-  blue:   'bg-blue-50   text-blue-600',
+  blue:   'bg-primary-50   text-primary-600',
   green:  'bg-green-50  text-green-600',
   orange: 'bg-orange-50 text-orange-500',
   purple: 'bg-purple-50 text-purple-600',

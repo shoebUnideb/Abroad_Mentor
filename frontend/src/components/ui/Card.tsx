@@ -24,9 +24,9 @@ export default function Card({
       onClick={onClick}
       style={style}
       className={[
-        'bg-white rounded-xl border border-gray-200 shadow-sm',
+        'bg-white rounded-lg border border-[#e0e0e0]',
         PAD[padding],
-        hoverable ? 'cursor-pointer transition-shadow hover:shadow-md hover:border-gray-300' : '',
+        hoverable ? 'cursor-pointer transition-colors hover:border-gray-300' : '',
         className,
       ].join(' ')}
     >

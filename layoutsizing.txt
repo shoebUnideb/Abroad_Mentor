@@ -1,0 +1,55 @@
+Clean. Here's what changed to make it more compact:
+
+Header: py-4 → py-2.5, title text-[20px] → text-[16px], buttons px-4 py-2 → px-3 py-1.5 rounded-lg
+Grid: gap-5 px-6 → gap-4 px-5, right column 360px → 340px
+Cards: rounded-2xl p-5 → rounded-xl p-4, inner spacing space-y-5 → space-y-4
+Table: rows py-3 → py-2, header py-2.5 → py-2, avatar w-8 h-8 → w-7 h-7, all text sizes down ~0.5pt
+Funnel bars: h-7 → h-5, spacing space-y-3 → space-y-2
+Activity log: space-y-3 → space-y-2, avatar w-7 h-7 → w-6 h-6
+Charts: trend height 200 → 160, pie 130×130 → 110×110, radii tightened
+Overdue table: collapsed Due Date into a sub-line under Task to save a column
+
+
+is there an attendance  with a form or something, and a system where the admin 
+can create a google kind of form of questionaries with all the things, like text
+ input, text logn short, mcq, polls, multiple answer answer and so on. does it 
+ exist it already. the purpose will be basically to communicate with whole team, 
+ all at once and individually, and keeping report in one day basically and also a 
+ place where in just place, by just on place and click it shows everything about 
+ that individuals trainings, there documents submitted, their tasks assignments,
+  their tasks done, their traing assigns and theri trainings done with detail,
+   their permissions etc like a finderprint of that person, lets dicuss for now
+
+now i am try to figure out what to do with these department and doc template sidebar page, as from my previous chats u can deduce i am cludding things up and giving the internal portal more structure
+
+
+The 5 Phases
+
+
+Phase 1 — JWT Migration (hardest, do first, stay on one server)
+Install djangorestframework-simplejwt
+Rewrite LoginView to return {access, refresh, user} instead of setting a session cookie
+Add LogoutView that blacklists the refresh token
+Build JWTAuthMiddleware to replace AuthMiddlewareStack for WebSockets — passes token via ?token= query param
+Rewrite apiClient.ts entirely: Authorization: Bearer header, auto-refresh on 401, no more CSRF
+AuthContext restores user by decoding JWT from localStorage — instant, no network call on page load
+
+
+Phase 2 — Frontend Split
+Extract into public-frontend/ and internal-frontend/ — two independent Vite projects
+Add AuthCallbackPage to internal-frontend to receive tokens via URL fragment (#access=TOKEN) — this is the SSO handoff between origins
+
+
+Phase 3 — Backend Split
+Three Django projects: auth-service, public-portal, internal-portal
+Key pattern: public-portal and internal-portal each connect to both their own DB and the shared auth_db via a DATABASE_ROUTER — no model changes needed, FKs still work
+
+
+Phase 4 — RS256 Asymmetric Keys
+One openssl genrsa command generates the key pair
+Only auth-service holds the private key — the others only get the public key and can verify but never issue tokens
+This is the security model — even if a portal server is compromised, it cannot forge identities
+
+
+Phase 5 — Deployment
+Three Nginx configs, three Gunicorn/Daphne processes, three .env files

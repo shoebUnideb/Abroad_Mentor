@@ -30,7 +30,7 @@ export default function ProtectedRoute({ allowedRoles }: Props) {
     const home: Record<Role, string> = {
       superadmin: '/admin/dashboard',
       mentor: '/mentor/dashboard',
-      student: '/student/dashboard',
+      student: '/workspaces',
     };
     return <Navigate to={home[user.role]} replace />;
   }

@@ -11,24 +11,24 @@ class CustomUserAdmin(UserAdmin):
     """
 
     # Columns shown in the list view
-    list_display = ('username', 'email', 'role', 'is_approved', 'is_active', 'date_joined')
-    list_filter = ('role', 'is_approved', 'is_active')
+    list_display = ('username', 'email', 'role', 'is_approved', 'has_internal_access', 'is_active', 'date_joined')
+    list_filter = ('role', 'is_approved', 'has_internal_access', 'is_active')
     search_fields = ('username', 'email')
     ordering = ('role', 'username')
 
     # Inline editing from the list
-    list_editable = ('is_approved',)
+    list_editable = ('is_approved', 'has_internal_access')
 
     # Fieldsets for the change/edit form – extend base UserAdmin fieldsets
     fieldsets = UserAdmin.fieldsets + (
         ('Role & Approval', {
-            'fields': ('role', 'is_approved'),
+            'fields': ('role', 'is_approved', 'has_internal_access'),
         }),
     )
 
     # Fieldsets for the add/create form
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Role & Approval', {
-            'fields': ('role', 'is_approved'),
+            'fields': ('role', 'is_approved', 'has_internal_access'),
         }),
     )

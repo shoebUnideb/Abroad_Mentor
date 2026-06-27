@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/mentor_platform/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/pages/shared/**)",
+      "Read(//Users/I770121/.claude/projects/-Users-I770121-Documents-GILE-org-Abroad_Mentor/memory/**)",
+      "Read(//Users/I770121/Desktop/**)",
+      "WebSearch",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/pages/workspace/tasks/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/pages/workspace/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/components/workspace/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/components/layout/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/context/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/frontend/src/pages/workspace/chat/**)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/core/**)",
+      "WebFetch(domain:docs.cloud.google.com)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:fair.pkg.atmeta.com)",
+      "WebFetch(domain:ai.meta.com)",
+      "Read(//Users/I770121/Documents/GILE\\\\ org/Abroad_Mentor/org_portal/**)",
+      "WebFetch(domain:amzn.eu)",
+      "WebFetch(domain:www.amazon.de)",
+      "WebFetch(domain:www.kabeldirekt.de)"
+    ],
+    "additionalDirectories": [
+      "/Users/I770121/.claude/projects/-Users-I770121-Documents-GILE-org-Abroad_Mentor/memory",
+      "/Users/I770121/Documents/GILE org/Intern_Portal",
+      "/Users/I770121/zaid hre"
+    ]
+  }
+}

@@ -92,7 +92,7 @@ def dashboard(request):
 @superadmin_required
 def superadmin_dashboard(request):
     from .models import CustomUser
-    from core.models import Assignment, Application, Step
+    from core.models import Assignment
     all_users = CustomUser.objects.all().order_by('role', 'username')
     context = {
         'user': request.user,
@@ -100,11 +100,6 @@ def superadmin_dashboard(request):
         'total_students':     all_users.filter(role='student').count(),
         'total_mentors':      all_users.filter(role='mentor').count(),
         'total_assignments':  Assignment.objects.filter(is_active=True).count(),
-        'total_applications': Application.objects.count(),
-        'total_steps':        Step.objects.count(),
-        'steps_submitted':    Step.objects.filter(status='submitted').count(),
-        'steps_approved':     Step.objects.filter(status='approved').count(),
-        'recent_apps':        Application.objects.select_related('student__user').order_by('-created_at')[:8],
     }
     return render(request, 'accounts/dashboard_superadmin.html', context)
 
@@ -113,10 +108,10 @@ def superadmin_dashboard(request):
 @approved_required
 @mentor_required
 def mentor_dashboard(request):
-    from core.models import MentorProfile, Assignment, Application, Step
+    from core.models import MentorProfile, Assignment
     try:
         mentor_profile = request.user.mentor_profile
-    except Exception:
+    except MentorProfile.DoesNotExist:
         mentor_profile = None
 
     assigned_students = []
@@ -125,22 +120,10 @@ def mentor_dashboard(request):
             mentor=mentor_profile, is_active=True
         ).select_related('student__user')
 
-    student_ids   = [a.student.id for a in assigned_students]
-    applications  = Application.objects.filter(
-        student__id__in=student_ids
-    ).select_related('student__user').prefetch_related('steps').order_by('-created_at')
-
-    pending_review = Step.objects.filter(
-        application__student__id__in=student_ids,
-        status=Step.STATUS_SUBMITTED,
-    ).select_related('application__student__user').order_by('application', 'order')
-
     context = {
         'user': request.user,
         'mentor_profile': mentor_profile,
         'assigned_students': assigned_students,
-        'applications': applications,
-        'pending_review': pending_review,
     }
     return render(request, 'accounts/dashboard_mentor.html', context)
 
@@ -149,29 +132,17 @@ def mentor_dashboard(request):
 @approved_required
 @student_required
 def student_dashboard(request):
-    from core.models import StudentProfile, Assignment, Application, Step
+    from core.models import StudentProfile, Assignment
     try:
         student_profile = request.user.student_profile
-    except Exception:
+    except StudentProfile.DoesNotExist:
         student_profile = None
 
-    assignment   = getattr(student_profile, 'assignment', None) if student_profile else None
-    applications = []
-    todo_steps   = []
-    if student_profile:
-        applications = Application.objects.filter(
-            student=student_profile
-        ).prefetch_related('steps').order_by('-created_at')
-        todo_steps = Step.objects.filter(
-            application__student=student_profile,
-            status__in=(Step.STATUS_TODO, Step.STATUS_NEEDS_REVISION),
-        ).select_related('application').order_by('application', 'order')
+    assignment = getattr(student_profile, 'assignment', None) if student_profile else None
 
     context = {
         'user': request.user,
         'student_profile': student_profile,
         'assignment': assignment,
-        'applications': applications,
-        'todo_steps': todo_steps,
     }
     return render(request, 'accounts/dashboard_student.html', context)
