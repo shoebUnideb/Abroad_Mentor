@@ -89,3 +89,4 @@ python manage.py runserver
 commands:   1. python3 manage.py runserver      Runs at: http://127.0.0.1:8000
             2. npm run dev                      Runs at: http://localhost:5173
             3. django admin panel               Runs at: http://127.0.0.1:8000/admin/
+# Gile
